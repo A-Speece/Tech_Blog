@@ -23,7 +23,7 @@ router.get("/:id", (req, res) => {
 
 router.post("/", (req, res) => {
   // create a new category
-  Blog.create(req.body).then((product) => {
+  Blog.create(req.body).then((blog) => {
     res.json(blog);
   });
 });
