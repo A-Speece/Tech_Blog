@@ -1,12 +1,10 @@
 const router = require("express").Router();
-const { Blog, Comment } = require("../../models");
+const { Comment } = require("../../models");
 
 router.get("/", (req, res) => {
   // find all categories
   // be sure to include its associated Products
-  Blog.findAll({
-    include: Comment,
-  }).then((blogs) => {
+  Comment.findAll({}).then((blogs) => {
     res.json(blogs);
   });
 });
@@ -14,24 +12,17 @@ router.get("/", (req, res) => {
 router.get("/:id", (req, res) => {
   // find one category by its `id` value
   // be sure to include its associated Products
-  Blog.findByPk(req.params.id, {
-    include: Comment,
-  }).then((blog) => {
+  Comment.findByPk(req.params.id, {}).then((blog) => {
     res.json(blog);
   });
 });
 
-router.post("/", (req, res) => {
+router.post("/api/comments", (req, res) => {
   // create a new category
   try {
-    const userData = Blog.create(req.body);
+    const userData = Comment.create(req.body);
 
-    req.session.save(() => {
-      req.session.user_id = userData.id;
-      req.session.logged_in = true;
-
-      res.status(200).json(userData);
-    });
+    res.status(200).json(userData);
   } catch (err) {
     console.log(err);
     res.status(400).json(err);

@@ -1,21 +1,36 @@
 const router = require("express").Router();
-const { User } = require("../models");
+const { User, Blog, Comment } = require("../models");
 
 router.get("/", async (req, res) => {
   try {
-    res.render("homepage", {
-      blogPosts: [
-        {
-          blog_title: "the title of the blog",
-          blog_content: "the content of the blog",
-        },
-        {
-          blog_title: "the title of the blog",
-          blog_content: "the content of the blog",
-        },
-      ],
+    Blog.findAll({
+      include: Comment,
+    }).then((blogs) => {
+      console.log(blogs);
+      const blogPosts = blogs.map((blog) => blog.get({ plain: true }));
+      res.render("homepage", {
+        blogPosts: blogPosts,
+      });
     });
   } catch (err) {
+    console.log(err);
+    res.status(500).json(err);
+  }
+});
+
+router.get("/blog/:id", async (req, res) => {
+  try {
+    Blog.findByPk(req.params.id, {
+      include: Comment,
+    }).then((blog) => {
+      console.log(blog);
+      const blogPost = blog.get({ plain: true });
+      res.render("single-post", {
+        blogPost: blogPost,
+      });
+    });
+  } catch (err) {
+    console.log(err);
     res.status(500).json(err);
   }
 });
